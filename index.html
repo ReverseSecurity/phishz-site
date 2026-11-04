@@ -1,0 +1,1091 @@
+<title>PHISHZ Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+/* Layout: big type, short lines, one idea per tile. Everything long hides behind
+   the Detail switch. Dark-first: indigo ground, amber signal, cyan second light. */
+:root {
+  --bg:#080B13; --bg2:#0C111C; --card:#121926; --card2:#18212F;
+  --line:#242F45; --line2:#1A2232;
+  --fg:#F0F3F8; --dim:#A6B2C6; --faint:#6D7B92;
+  --amber:#FFB534; --cyan:#4DD0E1; --mint:#4FD6A9; --crit:#FF7A6B; --warn:#FFC95C;
+  --a-dim:rgba(255,181,52,.13); --c-dim:rgba(77,208,225,.13);
+  --m-dim:rgba(79,214,169,.13); --x-dim:rgba(255,122,107,.13); --w-dim:rgba(255,201,92,.13);
+  --sh:0 28px 70px -40px rgba(0,0,0,.9);
+  --f-h:'Familjen Grotesk','Helvetica Neue',Arial,sans-serif;
+  --f-b:'Figtree','Helvetica Neue',Arial,sans-serif;
+  --f-m:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --r:16px; --rs:10px;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#F5F8FC; --bg2:#FFFFFF; --card:#FFFFFF; --card2:#EDF2F8;
+  --line:#D6DFEC; --line2:#E6EBF3;
+  --fg:#080D18; --dim:#4A586E; --faint:#6F7D91;
+  --amber:#8E5200; --cyan:#116B7A; --mint:#0E7A5C; --crit:#C1332A; --warn:#8A5A00;
+  --a-dim:rgba(142,82,0,.09); --c-dim:rgba(17,107,122,.09);
+  --m-dim:rgba(14,122,92,.09); --x-dim:rgba(193,51,42,.09); --w-dim:rgba(138,90,0,.09);
+  --sh:0 20px 48px -30px rgba(15,25,50,.3);
+  color-scheme: light;
+}}
+:root[data-theme="light"]{
+  --bg:#F5F8FC; --bg2:#FFFFFF; --card:#FFFFFF; --card2:#EDF2F8;
+  --line:#D6DFEC; --line2:#E6EBF3;
+  --fg:#080D18; --dim:#4A586E; --faint:#6F7D91;
+  --amber:#8E5200; --cyan:#116B7A; --mint:#0E7A5C; --crit:#C1332A; --warn:#8A5A00;
+  --a-dim:rgba(142,82,0,.09); --c-dim:rgba(17,107,122,.09);
+  --m-dim:rgba(14,122,92,.09); --x-dim:rgba(193,51,42,.09); --w-dim:rgba(138,90,0,.09);
+  --sh:0 20px 48px -30px rgba(15,25,50,.3);
+  color-scheme: light;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:15px}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-b);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg2)}
+.band{width:100%}
+.wrap{max-width:1130px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sect{padding-block:clamp(42px,5.2vw,74px)}
+.soft{background:var(--bg2);border-block:1px solid var(--line2)}
+.ln{border-top:1px solid var(--line2)}
+
+h1,h2,h3,h4{margin:0;font-family:var(--f-h);text-wrap:balance;letter-spacing:-.03em}
+h1{font-size:clamp(2.15rem,5.8vw,3.95rem);font-weight:700;line-height:.98;letter-spacing:-.045em}
+h2{font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:700;line-height:1.06;letter-spacing:-.038em}
+h3{font-size:clamp(1rem,1.6vw,1.16rem);font-weight:600;line-height:1.25}
+h4{font-size:.98rem;font-weight:600;letter-spacing:-.018em}
+p{margin:0}
+.k{font-family:var(--f-m);font-size:.72rem;letter-spacing:.17em;text-transform:uppercase;color:var(--amber)}
+.lede{font-size:clamp(1rem,1.35vw,1.14rem);line-height:1.5;color:var(--dim);max-width:46ch}
+.sub{font-size:.96rem;line-height:1.55;color:var(--dim);max-width:52ch}
+.grad{background:linear-gradient(96deg,var(--amber),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--amber)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:8px}
+.head{max-width:60ch}
+.head h2{margin-top:11px}
+.head .sub{margin-top:14px}
+
+/* header */
+section[id]{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 74px)}
+.hdr{position:sticky;top:env(safe-area-inset-top,0px);z-index:55;background:color-mix(in srgb,var(--bg2) 86%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--line2)}
+.hin{display:flex;align-items:center;gap:12px;padding-block:11px}
+.brand{display:flex;align-items:center;text-decoration:none;flex:none}
+.brand img{height:33px;width:auto}
+.ftr-lg{height:37px;width:auto;margin-bottom:14px}
+img.lg-d{display:block}
+img.lg-l{display:none}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]) img.lg-d{display:none}
+  :root:not([data-theme="dark"]) img.lg-l{display:block}}
+:root[data-theme="light"] img.lg-d{display:none}
+:root[data-theme="light"] img.lg-l{display:block}
+:root[data-theme="dark"] img.lg-d{display:block}
+:root[data-theme="dark"] img.lg-l{display:none}
+.hdr nav{margin-left:auto;display:flex;gap:2px}
+.hdr nav{gap:3px}
+.hdr nav a{font-family:var(--f-m);font-size:.73rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);text-decoration:none;padding:8px 12px;border-radius:999px;transition:.15s}
+.hdr nav a:hover{color:var(--fg)}
+.hdr nav a.on{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent)}
+.mb{display:none;flex:none;align-items:center;justify-content:center;width:42px;height:38px;border-radius:11px;
+  background:var(--card);border:1px solid var(--line);cursor:pointer;transition:.15s;margin-left:auto}
+.mb .bars{display:grid;gap:4px}
+.mb .bars i{display:block;width:16px;height:2px;border-radius:2px;background:var(--dim);transition:transform .22s,opacity .18s}
+.mb[aria-expanded="true"]{background:var(--card2);border-color:color-mix(in srgb,var(--amber) 55%,var(--line))}
+.mb[aria-expanded="true"] .bars i:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.mb[aria-expanded="true"] .bars i:nth-child(2){opacity:0}
+.mb[aria-expanded="true"] .bars i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+@media(max-width:1010px){
+  .mb{display:flex}
+  .hdr nav+.tgl{margin-left:6px}
+  .hdr nav{position:absolute;left:0;right:0;top:100%;margin:0;z-index:54;
+    display:grid;grid-template-columns:1fr;gap:5px;padding:12px 16px 16px;
+    background:var(--bg2);backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--line2);box-shadow:var(--sh);
+    visibility:hidden;opacity:0;transform:translateY(-8px);
+    transition:opacity .2s,transform .2s,visibility .2s}
+  .hdr nav.open{visibility:visible;opacity:1;transform:none}
+  .hdr nav a{padding:14px 14px;font-size:.8rem;letter-spacing:.09em;border-radius:11px;background:var(--card);border:1px solid var(--line)}
+  .hin{position:relative}
+}
+
+.tgl{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-family:var(--f-b);font-size:.78rem;font-weight:500;color:var(--dim);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 13px 6px 9px;cursor:pointer;transition:.15s;flex:none}
+.hdr nav+.tgl{margin-left:6px}
+.tgl:hover{color:var(--fg)}
+.tgl .sw{width:27px;height:15px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:.2s}
+.tgl .sw::after{content:"";position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:var(--faint);transition:.2s}
+.tgl.hint{animation:tglpulse 3.4s ease-in-out infinite}
+@keyframes tglpulse{
+  0%,72%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--amber) 0%,transparent);border-color:var(--line)}
+  80%{box-shadow:0 0 0 4px color-mix(in srgb,var(--amber) 16%,transparent);border-color:color-mix(in srgb,var(--amber) 60%,var(--line))}
+  88%{box-shadow:0 0 0 7px color-mix(in srgb,var(--amber) 0%,transparent);border-color:color-mix(in srgb,var(--amber) 35%,var(--line))}}
+.tgl[aria-pressed="true"]{color:var(--fg);border-color:color-mix(in srgb,var(--amber) 55%,var(--line))}
+.tgl[aria-pressed="true"] .sw{background:var(--a-dim)}
+.tgl[aria-pressed="true"] .sw::after{transform:translateX(12px);background:var(--amber)}
+@media(max-width:440px){.tgl .lb{display:none}}
+
+/* detail reveal */
+.d{display:none;margin-top:10px;padding:9px 11px;background:var(--card2);border-radius:8px;border-left:2px solid color-mix(in srgb,var(--amber) 55%,transparent);font-family:var(--f-m);font-size:.72rem;line-height:1.6;color:var(--faint);overflow-wrap:anywhere}
+body.on .d{display:block}
+
+/* icons */
+.ic{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ic-l{width:26px;height:26px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding-block:clamp(46px,8vw,104px) clamp(40px,6vw,76px)}
+.aur{position:absolute;inset:-30% -10% auto -10%;height:720px;pointer-events:none;opacity:.85;
+  background:
+   radial-gradient(42% 46% at 22% 36%,color-mix(in srgb,var(--amber) 26%,transparent),transparent 70%),
+   radial-gradient(38% 42% at 74% 24%,color-mix(in srgb,var(--cyan) 24%,transparent),transparent 70%),
+   radial-gradient(40% 40% at 54% 66%,color-mix(in srgb,var(--crit) 14%,transparent),transparent 72%);
+  filter:blur(36px);animation:drift 26s ease-in-out infinite alternate}
+@keyframes drift{0%{transform:translate3d(-2%,0,0) scale(1)}100%{transform:translate3d(3%,2%,0) scale(1.1)}}
+.hin2{position:relative;display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);gap:clamp(30px,5vw,58px);align-items:center}
+@media(max-width:960px){.hin2{grid-template-columns:1fr}}
+.hero h1{margin-top:15px}
+.hero .lede{margin-top:19px}
+.cta{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
+.b{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:600;font-size:.9rem;padding:11px 19px;border-radius:999px;border:1px solid transparent;cursor:pointer;font-family:var(--f-b);transition:transform .16s,box-shadow .16s}
+.b:hover{transform:translateY(-2px)}
+.b1{background:linear-gradient(100deg,var(--amber),color-mix(in srgb,var(--amber) 70%,var(--crit)));color:#1B1304;box-shadow:0 10px 30px -12px color-mix(in srgb,var(--amber) 60%,transparent)}
+:root[data-theme="light"] .b1,:root:not([data-theme="dark"]) .b1{color:#FFF8EC}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .b1{color:#1B1304}}
+:root[data-theme="dark"] .b1{color:#1B1304}
+.b2{background:var(--card);border-color:var(--line);color:var(--fg)}
+.chips{margin-top:24px;display:flex;flex-wrap:wrap;gap:7px}
+.ch{font-family:var(--f-m);font-size:.72rem;letter-spacing:.03em;border:1px solid var(--line);color:var(--dim);padding:5px 10px;border-radius:999px;background:color-mix(in srgb,var(--card) 70%,transparent)}
+.chan{margin-top:23px;display:flex;flex-wrap:wrap;gap:7px}
+.cg{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-b);font-size:.79rem;font-weight:600;line-height:1;padding:8px 13px;border-radius:999px;color:var(--fg);border:1px solid color-mix(in srgb,var(--mint) 40%,var(--line));background:color-mix(in srgb,var(--m-dim) 65%,transparent)}
+.cg .ic{width:14px;height:14px;flex:none;color:var(--mint)}
+.cg.out{border-color:color-mix(in srgb,var(--amber) 36%,var(--line));background:color-mix(in srgb,var(--a-dim) 60%,transparent)}
+.cg.out .ic{color:var(--amber)}
+.chn{margin-top:11px;font-size:.785rem;line-height:1.5;color:var(--faint);max-width:46ch}
+.chn b{font-weight:600}.chn .g1{color:var(--mint)}.chn .g2{color:var(--amber)}
+
+/* hero feed */
+.feed{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;min-width:0}
+.fh{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:1px solid var(--line2);background:var(--card2)}
+.fh .t{font-family:var(--f-h);font-weight:600;font-size:.92rem}
+.fh .e{margin-left:auto;font-size:.66rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line);padding:3px 8px;border-radius:999px}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--crit);flex:none;animation:pl 2.4s ease-in-out infinite}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
+.feed .bdy{max-height:min(52vh,430px);overflow-y:auto;scrollbar-width:thin}
+.fr{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:center;padding:12px 16px;transition:background .3s}
+.fr+.fr{border-top:1px solid var(--line2)}
+.fr.live{background:color-mix(in srgb,var(--amber) 7%,transparent)}
+.fr .ii{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;background:var(--a-dim);color:var(--amber)}
+.fr .w{display:block;font-size:.85rem;font-weight:500;line-height:1.35;min-width:0}
+.fr .s{display:block;margin-top:2px;font-size:.72rem;color:var(--faint);line-height:1.4}
+.fr .s b{color:var(--amber);font-weight:600}
+.sv{font-size:.62rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:4px 8px;border-radius:999px;white-space:nowrap}
+.sv-c{background:var(--x-dim);color:var(--crit)}.sv-h{background:var(--w-dim);color:var(--warn)}
+.sv-a{background:var(--a-dim);color:var(--amber)}.sv-r{background:var(--m-dim);color:var(--mint)}
+
+/* stats */
+.st .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(142px,1fr));gap:16px 20px;padding-block:26px}
+.s1 .n{font-family:var(--f-h);font-size:clamp(1.45rem,2.6vw,1.9rem);font-weight:700;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.s1 .l{font-size:.8rem;color:var(--dim);margin-top:1px;line-height:1.35}
+
+/* marquee */
+.mq{overflow:hidden;border-block:1px solid var(--line2);background:var(--bg2);padding-block:13px;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.mqt{display:flex;gap:30px;width:max-content;animation:sl 42s linear infinite}
+.mq:hover .mqt{animation-play-state:paused}
+@keyframes sl{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mqi{font-family:var(--f-h);font-weight:600;font-size:.92rem;color:var(--faint);white-space:nowrap;display:flex;align-items:center;gap:9px}
+.mqi::after{content:"";width:4px;height:4px;border-radius:50%;background:color-mix(in srgb,var(--amber) 70%,transparent)}
+
+/* product tour */
+.gal{margin-top:clamp(22px,3vw,32px)}
+.galvid{width:100%;display:block;border-radius:var(--r);border:1px solid var(--line);background:#000;box-shadow:var(--sh)}
+
+.galnote{margin-top:14px;display:flex;gap:10px;align-items:flex-start;font-size:.8rem;line-height:1.5;color:var(--faint)}
+.galnote .bx{width:24px;height:24px;border-radius:8px;flex:none;display:grid;place-items:center;background:var(--m-dim);color:var(--mint)}
+
+/* stepper */
+.rail{margin-top:calc(clamp(26px,3.6vw,38px) - 5px);display:flex;gap:8px;overflow-x:auto;padding:5px 1px 6px}
+.rail::-webkit-scrollbar{height:4px}.rail::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+.sp{flex:1 1 0;min-width:158px;text-align:left;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:var(--rs);padding:13px 14px;font-family:var(--f-b);transition:.2s;position:relative;overflow:hidden}
+.sp:hover{transform:translateY(-2px)}
+.sp .n{display:flex;align-items:center;gap:8px}
+.sp .n i{font-style:normal;width:21px;height:21px;border-radius:999px;flex:none;display:grid;place-items:center;font-family:var(--f-m);font-size:.66rem;background:var(--card2);color:var(--faint);transition:.2s}
+.sp .w{display:block;font-family:var(--f-m);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.sp .ti{display:block;margin-top:8px;font-weight:600;font-size:.92rem;color:var(--dim);line-height:1.25;transition:.2s}
+.sp[aria-selected="true"]{background:var(--card2);border-color:color-mix(in srgb,var(--amber) 60%,var(--line))}
+.sp[aria-selected="true"] .n i{background:linear-gradient(140deg,var(--amber),var(--cyan));color:#1B1304}
+.sp[aria-selected="true"] .ti{color:var(--fg)}
+.sp[aria-selected="true"]::after{content:"";position:absolute;inset:auto 0 0 0;height:2px;background:linear-gradient(90deg,var(--amber),var(--cyan))}
+.pan{margin-top:19px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3vw,32px);box-shadow:var(--sh)}
+.pan .k{color:var(--cyan)}
+.pan h3{margin-top:8px;font-size:clamp(1.08rem,1.9vw,1.38rem);letter-spacing:-.03em}
+.pan .one{margin-top:11px;font-size:.96rem;line-height:1.5;color:var(--dim);max-width:62ch}
+
+/* tiles */
+.tiles{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(224px,1fr));gap:12px}
+.ti{background:var(--card2);border:1px solid var(--line2);border-radius:var(--rs);padding:15px 16px;min-width:0;transition:.2s;position:relative}
+.ti:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--amber) 42%,var(--line))}
+.ti .h{display:flex;align-items:center;gap:9px}
+.ti .h .bx{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--a-dim);color:var(--amber)}
+.ti .nm{font-family:var(--f-h);font-weight:600;font-size:.94rem;line-height:1.3}
+.ti .nm i{font-style:normal;color:var(--amber)}
+.ti .tx{margin-top:9px;font-size:.855rem;line-height:1.5;color:var(--dim)}
+.ti.cy .h .bx,.cy .bx{background:var(--c-dim);color:var(--cyan)}
+.ti.mn .h .bx,.mn .bx{background:var(--m-dim);color:var(--mint)}
+
+/* segmented tabs */
+.segs{margin-top:clamp(24px,3.2vw,34px);display:flex;gap:7px;flex-wrap:wrap}
+.sg{cursor:pointer;font-family:var(--f-b);font-weight:600;font-size:.92rem;background:var(--card);border:1px solid var(--line);color:var(--dim);padding:10px 18px;border-radius:999px;transition:.2s}
+.sg:hover{color:var(--fg)}
+.sg[aria-selected="true"]{background:linear-gradient(100deg,var(--amber),color-mix(in srgb,var(--amber) 72%,var(--crit)));border-color:transparent;color:#1B1304}
+:root[data-theme="light"] .sg[aria-selected="true"],:root:not([data-theme="dark"]) .sg[aria-selected="true"]{color:#FFF8EC}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .sg[aria-selected="true"]{color:#1B1304}}
+:root[data-theme="dark"] .sg[aria-selected="true"]{color:#1B1304}
+.wp{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3vw,32px);box-shadow:var(--sh);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.88fr);gap:clamp(20px,3.4vw,40px)}
+@media(max-width:880px){.wp{grid-template-columns:1fr}}
+.q{display:flex;gap:10px;align-items:flex-start;font-family:var(--f-h);font-size:clamp(1rem,1.6vw,1.2rem);font-weight:600;line-height:1.28;letter-spacing:-.025em}
+.q .m{flex:none;width:25px;height:25px;border-radius:50%;background:var(--a-dim);color:var(--amber);display:grid;place-items:center;font-size:.9rem;margin-top:1px}
+.wp .ans{margin-top:14px;font-size:.94rem;line-height:1.55;color:var(--dim)}
+.wp .ans b{color:var(--fg);font-weight:600}
+.pts{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.pts li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;align-items:start;font-size:.88rem;line-height:1.5;color:var(--dim)}
+.pts .dt{width:21px;height:21px;border-radius:7px;background:var(--m-dim);color:var(--mint);display:grid;place-items:center;flex:none;margin-top:1px}
+.pts b{color:var(--fg);font-weight:600}
+.lbl{font-family:var(--f-m);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:12px;display:block}
+
+/* filter + grid */
+.fl{margin-top:clamp(20px,2.8vw,30px);display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.fc{cursor:pointer;font-family:var(--f-b);font-size:.84rem;font-weight:500;background:var(--card);border:1px solid var(--line);color:var(--dim);padding:7px 14px;border-radius:999px;transition:.16s}
+.fc:hover{color:var(--fg)}
+.fc[aria-pressed="true"]{background:var(--card2);border-color:color-mix(in srgb,var(--amber) 62%,var(--line));color:var(--fg)}
+.cnt{font-size:.8rem;color:var(--faint);margin-left:4px}
+.grid{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(252px,1fr));gap:12px}
+.mc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:17px 18px;min-width:0;transition:.2s}
+.mc:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--cyan) 45%,var(--line));box-shadow:var(--sh)}
+.mc .h{display:flex;align-items:center;gap:9px}
+.mc .bx{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--c-dim);color:var(--cyan)}
+.mc .nm{font-family:var(--f-h);font-weight:600;font-size:.96rem;line-height:1.3}
+.mc .nm i{font-style:normal;color:var(--amber)}
+.mc .subs{margin-top:8px;padding-top:8px;border-top:1px solid var(--line2);font-family:var(--f-m);font-size:.67rem;line-height:1.5;color:var(--faint);letter-spacing:.01em}
+.mc .tx{margin-top:9px;font-size:.855rem;line-height:1.5;color:var(--dim)}
+
+/* accordion technique tiles */
+.acc{margin-top:20px;display:grid;grid-template-columns:1fr;gap:10px}
+.at{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;min-width:0;transition:.2s}
+.at:hover{border-color:color-mix(in srgb,var(--amber) 45%,var(--line))}
+.at button{width:100%;text-align:left;background:none;border:0;cursor:pointer;padding:17px 18px;font-family:var(--f-b);color:inherit;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:center}
+.at .bx{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--a-dim);color:var(--amber)}
+.at .nm{display:block;font-family:var(--f-h);font-weight:600;font-size:.96rem;line-height:1.25;min-width:0}
+.at .sbt{display:block;margin-top:3px;font-size:.76rem;color:var(--faint);line-height:1.35}
+.at .cv{width:18px;height:18px;color:var(--faint);transition:transform .26s cubic-bezier(.4,0,.2,1)}
+.at.open{background:var(--card2);border-color:color-mix(in srgb,var(--amber) 52%,var(--line))}
+.at.open .cv{transform:rotate(135deg);color:var(--amber)}
+.at .nw{min-width:0}
+.at .bdw{display:grid;grid-template-rows:0fr;overflow:hidden;transition:grid-template-rows .3s cubic-bezier(.4,0,.2,1)}
+.at.open .bdw{grid-template-rows:1fr}
+.at .bd{min-height:0;overflow:hidden;padding:0 18px;font-size:.855rem;line-height:1.55;color:var(--dim);box-shadow:inset 0 1px 0 var(--line2);transition:padding .3s cubic-bezier(.4,0,.2,1)}
+.at.open .bd{padding-top:14px;padding-bottom:17px}
+@media(min-width:720px){
+  .at .nw{display:flex;align-items:baseline;gap:8px 16px;flex-wrap:wrap}
+  .at .nm{flex:0 0 auto}
+  .at .sbt{margin-top:0;min-width:0;flex:1 1 auto}
+  .at .bd{padding-left:59px;padding-right:48px}
+}
+.at .bd ul{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.at .bd li{padding-left:14px;position:relative;font-size:.82rem;line-height:1.45}
+.at .bd li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:2px;background:color-mix(in srgb,var(--amber) 70%,transparent)}
+
+/* cascade */
+.flow{margin-top:clamp(22px,3vw,32px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media(max-width:860px){.flow{grid-template-columns:1fr}}
+.fs{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 19px;min-width:0;position:relative}
+.fs.op{border-style:dashed}
+.fs .hh{display:flex;align-items:center;gap:9px}
+.fs .hh i{font-style:normal;width:26px;height:26px;border-radius:9px;flex:none;display:grid;place-items:center;font-size:.8rem;font-weight:700;background:linear-gradient(140deg,var(--amber),var(--cyan));color:#1B1304}
+.fs.op .hh i{background:var(--card2);color:var(--faint)}
+.fs .sz{margin-top:11px;font-family:var(--f-m);font-size:.66rem;letter-spacing:.05em;text-transform:uppercase;color:var(--cyan)}
+.fs .tx{margin-top:8px;font-size:.86rem;line-height:1.5;color:var(--dim)}
+.rule{margin-top:13px;background:var(--card2);border:1px solid var(--line);border-radius:var(--rs);padding:16px 18px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:13px;align-items:center}
+.rule .vb{font-family:var(--f-m);font-size:.64rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:5px 10px;border-radius:999px;white-space:nowrap;background:var(--m-dim);color:var(--mint)}
+.rule .tx{font-size:.9rem;line-height:1.5;color:var(--dim)}
+.rule .tx b{color:var(--fg);font-weight:600}
+
+/* sandbox badges */
+.gh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:clamp(24px,3.2vw,34px)}
+.gh h3{font-size:1.08rem}
+.bd2{display:inline-flex;align-items:center;gap:6px;font-size:.64rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 9px;border-radius:999px}
+.bd-i{background:var(--m-dim);color:var(--mint)}.bd-o{background:var(--w-dim);color:var(--warn)}
+.sbx{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(214px,1fr));gap:11px}
+.sb{background:var(--card);border:1px solid var(--line);border-radius:var(--rs);padding:14px 15px;min-width:0;transition:.2s}
+.sb:hover{transform:translateY(-2px)}
+.sb .nm{font-family:var(--f-h);font-weight:600;font-size:.9rem}
+.sb .tx{margin-top:6px;font-size:.8rem;line-height:1.45;color:var(--dim)}
+.sb .sh{margin-top:8px;font-family:var(--f-m);font-size:.66rem;line-height:1.45;color:var(--faint)}
+
+/* honest */
+.why{margin-top:clamp(26px,3.4vw,36px);border-left:3px solid var(--amber);padding:2px 0 2px clamp(16px,2.2vw,24px);max-width:64ch}
+.why p{font-family:var(--f-h);font-size:clamp(1.12rem,2vw,1.5rem);font-weight:600;line-height:1.32;letter-spacing:-.025em}
+.why p+p{margin-top:13px;font-family:var(--f-b);font-size:.9rem;font-weight:400;line-height:1.6;letter-spacing:0;color:var(--dim)}
+.hon{margin-top:clamp(24px,3.2vw,34px);background:var(--card2);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,3vw,30px)}
+.hon h3{font-size:1.1rem}
+.hl{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:12px}
+.hl li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;align-items:start;font-size:.875rem;line-height:1.5;color:var(--dim)}
+.hl li .nn{width:20px;height:20px;border-radius:6px;background:var(--card);border:1px solid var(--line);color:var(--faint);display:grid;place-items:center;font-size:.66rem;font-weight:700;flex:none;margin-top:1px;font-family:var(--f-m)}
+.hl b{color:var(--fg);font-weight:600}
+
+/* close */
+.cl{padding-block:clamp(48px,6.5vw,86px);text-align:center;position:relative;overflow:hidden}
+.cl h2{max-width:22ch;margin-inline:auto}
+.cl .lede{margin:16px auto 0;max-width:50ch}
+.cl .cta{justify-content:center}
+.ftr{border-top:1px solid var(--line2);background:var(--bg2)}
+.ftr .wrap{padding-block:28px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.ftr .nt{font-size:.8rem;color:var(--faint);line-height:1.6;max-width:56ch}
+.ftr .rt{margin-left:auto;font-family:var(--f-m);font-size:.74rem;color:var(--faint)}
+@media(max-width:700px){.ftr .rt{margin-left:0}}
+
+/* Touch targets and legibility on phones: 44px-ish hit areas, no sub-11px type. */
+@media(max-width:820px){
+  .fc{padding:11px 15px;font-size:.86rem}
+  .tgl{padding:10px 14px 10px 11px;font-size:.8rem}
+  .brand{padding:5px 2px}
+  .brand img{height:31px}
+  .sv{font-size:.72rem;padding:5px 9px}
+  .fh .e{font-size:.7rem;padding:4px 9px}
+  .k{font-size:.76rem;letter-spacing:.14em}
+  .ch{font-size:.76rem;padding:7px 12px}
+  .sg{padding:12px 18px}
+  .hdr nav a{padding-block:10px}
+  .sp .w{font-size:.72rem;letter-spacing:.08em}
+  .brand{padding:7px 4px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .b:hover,.ti:hover,.mc:hover,.sp:hover,.sb:hover{transform:none}
+}
+/* Phone legibility. The root font is 15px, so rem-based micro-labels land at
+   9.6-11.1px on a handset. Floored here, at the end of the sheet and with the
+   same specificity as the rules they override, plus 44px touch targets. */
+@media(max-width:820px){
+  .k,.ch{font-size:12px}
+  .at .sbt{font-size:12px}
+  .lbl,.bd2{font-size:11.5px}
+  .rule .vb{font-size:11.5px}
+  .fs .sz{font-size:11.5px}
+  .sb .sh{font-size:11.5px}
+  .mc .subs{font-size:11.5px;line-height:1.5}
+  .hl li .nn{font-size:11.5px;width:22px;height:22px}
+  .ftr .rt{font-size:12.5px}
+  .sp .w{font-size:12px}
+  .fh .e{font-size:11.5px}
+  .sv{font-size:11.5px}
+  .mb{min-width:44px;min-height:44px}
+  .tgl{min-height:44px}
+  .fc{min-height:44px}
+  .hdr nav a{min-height:44px;display:flex;align-items:center}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m2.5 6.5 9.5 7 9.5-7"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.6"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+<symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.6"/><path d="M12 12 19 7"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a7 7 0 0 1-7 7H9l-5 3 1.2-4A7 7 0 0 1 10 5h4a7 7 0 0 1 7 7z"/></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1 .5-8 5.5 5.5 0 0 1 10.6 1.4A3.6 3.6 0 0 1 17.5 18z"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></symbol>
+<symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 17v4h-3"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 3h3l2 5-2.2 1.6a12 12 0 0 0 6.6 6.6L16 14l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></symbol>
+<symbol id="i-usb" viewBox="0 0 24 24"><path d="M12 21V7"/><path d="m9 10 3-7 3 7z"/><path d="M12 15l4.5-3V9M12 17l-4.5-3v-2"/></symbol>
+<symbol id="i-video" viewBox="0 0 24 24"><rect x="2.5" y="6" width="13" height="12" rx="2"/><path d="m16 11 5.5-3v8L16 13z"/></symbol>
+<symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M10 10h4v4h-4zM12 3v3.5M12 17.5V21M3 12h3.5M17.5 12H21M6 3.5v1M18 3.5v1"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+<symbol id="i-cert" viewBox="0 0 24 24"><circle cx="12" cy="9.5" r="5.5"/><path d="m8.5 14.5-.5 6 4-2 4 2-.5-6"/></symbol>
+<symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v5l-5 9a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 17l-5-9V3"/><path d="M7.5 14h9"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.5 2 5 13h6l-1.5 9 8.5-11h-6z"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="4.5"/><path d="m11.2 11.2 9 9M17 17l2-2M14 14l2-2"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></symbol>
+</defs></svg>
+
+<header class="hdr">
+  <div class="wrap hin">
+    <a class="brand" href="#top" aria-label="PHISHZ, Phish Zenith"><img class="lg lg-d" src="brand/logo-on-dark.webp" alt="PHISHZ" width="487" height="130"><img class="lg lg-l" src="brand/logo-on-light.webp" alt="" aria-hidden="true" width="488" height="129"></a>
+    <nav id="nav">
+      <a href="#tour">Watch it</a>
+      <a href="#chain">The chain</a>
+      <a href="#ai">The AI</a>
+      <a href="#mods">Modules</a>
+      <a href="#about">Why free</a>
+    </nav>
+    <button class="mb" id="mb" type="button" aria-expanded="false" aria-controls="nav" aria-label="Sections"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span></button>
+    <button class="tgl" id="tg" type="button" aria-pressed="false"><span class="sw" aria-hidden="true"></span><span class="lb">Detail</span></button>
+  </div>
+</header>
+
+<section class="band hero">
+  <div class="aur" aria-hidden="true"></div>
+  <div class="wrap hin2">
+    <div>
+      <span class="k">Phish Zenith · AI-powered defence for Microsoft 365</span>
+      <h1>Phishing stopped being an <span class="grad">email</span> problem.</h1>
+      <p class="lede">Now it is a Teams message from a partner who was breached last week. A file dropped into a shared folder. A text to a personal phone. A call that already knows your finance director by name. Your mail filter sees none of it.</p>
+      <div class="cta">
+        <a class="b b1" href="#tour">See the console <svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></a>
+        <a class="b b2" href="#mods">Browse modules</a>
+      </div>
+      <div class="chan">
+        <span class="cg"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg>Email</span><span class="cg"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg>Teams</span><span class="cg"><svg class="ic" aria-hidden="true"><use href="#i-cloud"/></svg>Shared files</span><span class="cg out"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg>Text message</span><span class="cg out"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg>Voice call</span>
+      </div>
+      <p class="chn"><b class="g1">Green</b> is watched continuously inside your tenancy. <b class="g2">Amber</b> never touches it, so your people are rehearsed against it instead, until they stop falling for it.</p>
+      <div class="chips">
+        <span class="ch">Custom-trained AI, on your hardware</span>
+        <span class="ch">Fully offline, nothing to the cloud</span>
+        <span class="ch">Works with your email security</span>
+      </div>
+    </div>
+    <div>
+      <div class="feed">
+        <div class="fh"><span class="pulse" aria-hidden="true"></span><span class="t">Needs you today</span><span class="e">Example</span></div>
+        <div class="bdy">
+        <div class="fr live" data-f><span class="ii"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg></span><span><span class="w">A copycat of your domain went live with mail records configured</span><span class="s">Signal from <b>DNSimposter</b></span></span><span class="sv sv-c">Urgent</span></div>
+        <div class="fr" data-f><span class="ii"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span><span class="w">Someone signed in through a relayed copy of your login page</span><span class="s">Signal from <b>AiTMtrap</b></span></span><span class="sv sv-c">Urgent</span></div>
+        <div class="fr" data-f><span class="ii"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><span><span class="w">Finance is quietly forwarding mail outside the company</span><span class="s">Signal from <b>Watcher</b></span></span><span class="sv sv-h">High</span></div>
+        <div class="fr" data-f><span class="ii"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg></span><span><span class="w">A partner's Teams account is sending links to your staff</span><span class="s">Signal from <b>Guardian</b></span></span><span class="sv sv-h">High</span></div>
+        <div class="fr" data-f><span class="ii"><svg class="ic" aria-hidden="true"><use href="#i-cloud"/></svg></span><span><span class="w">A file dropped into a shared channel drive failed analysis</span><span class="s">Signal from <b>Guardian Files</b></span></span><span class="sv sv-h">High</span></div>
+        <div class="fr" data-f><span class="ii"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><span><span class="w">A sender nobody recognises started sending as your domain</span><span class="s">Signal from <b>DMARCinspector</b></span></span><span class="sv sv-r">Review</span></div>
+        <div class="fr" data-f><span class="ii"><svg class="ic" aria-hidden="true"><use href="#i-radar"/></svg></span><span><span class="w">A supplier on your watchlist appeared on a leak site</span><span class="s">Signal from <b>DarkScout</b></span></span><span class="sv sv-r">Review</span></div>
+        <div class="fr" data-f><span class="ii"><svg class="ic" aria-hidden="true"><use href="#i-cert"/></svg></span><span><span class="w">A certificate revocation is waiting for your approval</span><span class="s">Signal from <b>CertAdmin</b></span></span><span class="sv sv-a">Action</span></div>
+        <div class="fr" data-f><span class="ii"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span><span><span class="w">14 copies of a reported email are still sitting in mailboxes</span><span class="s">Signal from <b>Hunter</b></span></span><span class="sv sv-a">Action</span></div>
+        <div class="fr" data-f><span class="ii"><svg class="ic" aria-hidden="true"><use href="#i-target"/></svg></span><span><span class="w">This month's department campaign results are ready</span><span class="s">Signal from <b>Trainer</b></span></span><span class="sv sv-r">Review</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band soft st">
+  <div class="wrap">
+    <div class="s1"><div class="n">16+</div><div class="l">modules behind one login</div></div>
+    <div class="s1"><div class="n">154</div><div class="l">exercises ready to send</div></div>
+    <div class="s1"><div class="n">93</div><div class="l">phishing emails already written</div></div>
+    <div class="s1"><div class="n">22</div><div class="l">fixes for a compromised account</div></div>
+    <div class="s1"><div class="n">8</div><div class="l">techniques you can rehearse</div></div>
+  </div>
+</section>
+
+<div class="mq" aria-hidden="true">
+  <div class="mqt">
+    <span class="mqi">Analyst</span><span class="mqi">Hunter</span><span class="mqi">Guardian</span><span class="mqi">Watcher</span><span class="mqi">Trainer</span><span class="mqi">Signatory</span><span class="mqi">DMARCinspector</span><span class="mqi">DNSimposter</span><span class="mqi">AiTMtrap</span><span class="mqi">DarkScout</span><span class="mqi">CertAdmin</span><span class="mqi">Sandbox</span><span class="mqi">TokenGuard</span><span class="mqi">CA Guard</span><span class="mqi">Teams</span><span class="mqi">OneDrive</span>
+    <span class="mqi">Analyst</span><span class="mqi">Hunter</span><span class="mqi">Guardian</span><span class="mqi">Watcher</span><span class="mqi">Trainer</span><span class="mqi">Signatory</span><span class="mqi">DMARCinspector</span><span class="mqi">DNSimposter</span><span class="mqi">AiTMtrap</span><span class="mqi">DarkScout</span><span class="mqi">CertAdmin</span><span class="mqi">Sandbox</span><span class="mqi">TokenGuard</span><span class="mqi">CA Guard</span><span class="mqi">Teams</span><span class="mqi">OneDrive</span>
+  </div>
+</div>
+
+<section class="band sect" id="tour">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">Product tour</span>
+      <h2>The console, end to end</h2>
+      <p class="sub">A complete walkthrough of the working product, covering every module in the order an incident moves through them. The organisation shown is fictitious, so the recording can be shared without restriction.</p>
+    </div>
+
+    <div class="gal">
+      <video class="galvid" controls preload="none" poster="tour/poster.webp" playsinline>
+        <source src="tour/walkthrough.webm" type="video/webm">
+        Your browser cannot play this walkthrough. The gallery below shows the same screens.
+      </video>
+
+      <p class="galnote"><span class="bx"><svg class="ic" aria-hidden="true" style="width:14px;height:14px"><use href="#i-shield"/></svg></span><span>Every identity, domain, address and network detail in this recording is fictitious. No customer environment appears at any point.</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="band sect" id="chain">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">How it works</span>
+      <h2>Detection is <span class="grad">one stage of five</span></h2>
+      <p class="sub">A filter owns the moment of delivery. The weeks before it, and the months after, are where breaches actually happen, and where a small team is usually on its own. Step through all five.</p>
+    </div>
+
+    <div class="rail" role="tablist" aria-label="Stages of an attack">
+      <button class="sp" role="tab" id="t1" aria-controls="p1" aria-selected="true"><span class="n"><i>1</i><span class="w">Weeks before</span></span><span class="ti">Setting the trap</span></button>
+      <button class="sp" role="tab" id="t2" aria-controls="p2" aria-selected="false"><span class="n"><i>2</i><span class="w">The moment</span></span><span class="ti">It arrives</span></button>
+      <button class="sp" role="tab" id="t3" aria-controls="p3" aria-selected="false"><span class="n"><i>3</i><span class="w">Minutes later</span></span><span class="ti">Someone clicks</span></button>
+      <button class="sp" role="tab" id="t4" aria-controls="p4" aria-selected="false"><span class="n"><i>4</i><span class="w">Weeks after</span></span><span class="ti">They settle in</span></button>
+      <button class="sp" role="tab" id="t5" aria-controls="p5" aria-selected="false"><span class="n"><i>5</i><span class="w">Always</span></span><span class="ti">Your people</span></button>
+    </div>
+
+    <div class="pan" role="tabpanel" id="p1" aria-labelledby="t1" tabindex="0">
+      <span class="k">Weeks before anything reaches you</span>
+      <h3>Someone is building the trap</h3>
+      <p class="one">A domain is registered to look like yours: a swapped letter, a lookalike character, a different ending. Mail gets switched on. Somebody tests whether they can send as you. All of it visible, all of it before a single message lands.</p>
+      <div class="tiles">
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg></span><span class="nm">DNS<i>i</i>mposter</span></div><p class="tx">Finds the copycat domains someone has actually registered, and which of them are set up to receive mail.</p><div class="d">Lookalike permutations generated locally, then checked for registration, ownership, hosting country, live mail service and visual similarity to your real site.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><span class="nm">DMARC<i>i</i>nspector</span></div><p class="tx">Turns the daily reports providers send back into a readable list of who sends mail as you.</p><div class="d">Aggregate report ingestion, GeoIP/ASN enrichment, alerts on new_source, failure_spike, policy_change, volume_anomaly.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-radar"/></svg></span><span class="nm">Dark<i>S</i>cout</span></div><p class="tx">Watches leak sites for your name and your suppliers', so you hear it in hours.</p><div class="d">Passive polling of public leak-site indexes. Matching runs on your server and your watchlist is never uploaded.</div></div>
+      </div>
+    </div>
+
+    <div class="pan" role="tabpanel" id="p2" aria-labelledby="t2" tabindex="0" hidden>
+      <span class="k">The moment it arrives</span>
+      <h3>Something lands, and usually nobody reports it</h3>
+      <p class="one">Mail, a Teams chat with an outside company, or a file in a shared library. The platform never waits to be told.</p>
+      <div class="tiles">
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="nm">Guardian</span></div><p class="tx">Checked within seconds of arrival. Watch only, or quarantine on its own.</p><div class="d">Graph change notifications to an Azure Function, Service Bus queue, scanner pulls outbound. Failed scan quarantines rather than passing.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><span class="nm">Analyst</span></div><p class="tx">Reported mail reviewed and detonated safely, laid out for a decision in one screen.</p><div class="d">Parsed once in a per-email ephemeral container. Auth shown as received and as re-checked. SafeLinks unwrapped.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">Quarantine</span></div><p class="tx">Microsoft, Check Point and Kaspersky held mail, in one list.</p><div class="d">EOP/MDO, Avanan live API, and Kaspersky's hidden KSMO365 folder via a StoreId to RestId translation.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="nm">Report button</span></div><p class="tx">One click in Outlook or on iPhone. Training sims get credited, not queued.</p><div class="d">Add-in sends an identifier only; the appliance fetches the message itself. Edge proxy is outbound-polled.</div></div>
+      </div>
+    </div>
+
+    <div class="pan" role="tabpanel" id="p3" aria-labelledby="t3" tabindex="0" hidden>
+      <span class="k">Minutes after the click</span>
+      <h3>They sign in to a page that isn't yours</h3>
+      <p class="one">Modern credential theft relays the real Microsoft page through the attacker's server, so the approval on your phone gets used by them. Filters never see it.</p>
+      <div class="tiles">
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="nm">AiTM<i>t</i>rap</span></div><p class="tx">A hidden marker in your sign-in branding. A relayed page loads it and gives itself away.</p><div class="d">Three canary beacons via Entra company branding CSS. Twelve weighted signals: referer, proxy headers, hosting ASN, Sec-Fetch, domain age, timing.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><span class="nm">Sign-in watch</span></div><p class="tx">Learns each person's normal, flags what doesn't fit, reads next to the tripwire.</p><div class="d">Entra sign-in and risk-event ingestion, per-UPN baselines, rescoring, correlation runs, geography view.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span><span class="nm">Hunter</span></div><p class="tx">One person reported it, forty got it. Find every copy and remove it.</p><div class="d">Tenant-wide search incl. recipients. Multi-mailbox jobs with cancel and merge. Restore walks Quarantine, Deleted Items, Recoverable Items.</div></div>
+      </div>
+    </div>
+
+    <div class="pan" role="tabpanel" id="p4" aria-labelledby="t4" tabindex="0" hidden>
+      <span class="k">Weeks to months afterwards</span>
+      <h3>A stolen sign-in is the start of a tenancy</h3>
+      <p class="one">Mail gets copied out. A rule hides the bank's replies. An app approved once keeps reading mail after the password change. This is where invoice fraud actually lives.</p>
+      <div class="tiles">
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><span class="nm">Watcher</span></div><p class="tx">The clean-up list: forwarding, hidden rules, approved apps, extra access. Fix button on each.</p><div class="d">22 finding categories. Remediation: remove rules, revoke OAuth, drop delegates, revoke sessions, force password change, disable account (hybrid-aware).</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><span class="nm">Outbound watch</span></div><p class="tx">Reads the account's own sent mail. A phished mailbox sends the next wave.</p><div class="d">72h window over SentItems: burst rate, one subject to many recipients, Bcc-heavy, HTML attachments. Links matched against DNSimposter lookalikes.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="nm">TokenGuard</span></div><p class="tx">A password change is useless if they still hold a live session. Spots the reuse.</p><div class="d">Correlates interactive logins against non-interactive token redemptions via Graph beta signInEventTypes. Confidence-gated auto-revoke.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="nm">CA Guard</span></div><p class="tx">Watches your sign-in rules for drift, and who changed them.</p><div class="d">Read-only Conditional Access inventory, drift detection, Zero-Trust baseline coverage, report-only and what-if impact.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg></span><span class="nm">Password Guard</span></div><p class="tx">Read-only sweep of the office directory, including which staff reuse a password that has already leaked.</p><div class="d">Kerberoastable accounts, AS-REP roasting, unconstrained delegation, privileged group drift, krbtgt age, stale enabled accounts, and a breached-password audit that compares hashes only.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">App permissions</span></div><p class="tx">The standing access applications hold as themselves, with no user and no sign-in to notice.</p><div class="d">Tenant-wide audit of application (app-only) Graph permissions, scored by what they would allow.</div></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-cert"/></svg></span><span class="nm">Cert<i>A</i>dmin</span></div><p class="tx">Certificates survive a password reset. Lists them per person, cancels on approval.</p><div class="d">Inventory per person and device, hardware-attestation and escrow state, abusable template detection, approval-gated revocation executed by an agent on the CA, and CRL publication. The appliance holds no CA credentials.</div></div>
+      </div>
+    </div>
+
+    <div class="pan" role="tabpanel" id="p5" aria-labelledby="t5" tabindex="0" hidden>
+      <span class="k">Every day</span>
+      <h3>The last control is a person with four seconds</h3>
+      <p class="one">Every stage above is something that already failed. The only honest way to measure the last one is to attack it yourself.</p>
+      <div class="tiles">
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-target"/></svg></span><span class="nm">Trainer</span></div><p class="tx">Eight real techniques, 154 ready-made exercises, taught at the moment of the mistake.</p></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-video"/></svg></span><span class="nm">Fake meetings</span></div><p class="tx">A Teams or Zoom join screen, or a live cloned voice on the call.</p></div>
+        <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="nm">Signatory</span></div><p class="tx">Email signatures. One approved layout on every mailbox, filled in from your directory.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band soft sect" id="surfaces">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">Beyond the inbox</span>
+      <h2>Your staff stopped living in email. Attackers noticed first.</h2>
+      <p class="sub">A Teams link from a partner never passes your email security at all. A shared file gets opened by everyone.</p>
+    </div>
+    <div class="tiles" style="margin-top:clamp(24px,3.2vw,34px)">
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg></span><span class="nm">Microsoft Teams</span></div><p class="tx">Chats with outside organisations, checked as messages arrive. Clean chat is discarded, never stored.</p><div class="d">Graph change-notification subscriptions on /chats/getAllMessages, delivered to the backend's own webhook. Processed ephemerally.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">Watch, then block</span></div><p class="tx">It never silently alters Teams. Cutting off a compromised partner is a separate, recorded, reversible action.</p><div class="d">Monitor-mode only by design; enforcement is an explicit audited endpoint with an unblock counterpart.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-cloud"/></svg></span><span class="nm">OneDrive &amp; SharePoint</span></div><p class="tx">Shared libraries and Teams channel drives, watched continuously rather than on report.</p><div class="d">Guardian Files poll covers SharePoint document libraries and shared-channel OneDrive drives.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg></span><span class="nm">Files stay local</span></div><p class="tx">A customer's document is never uploaded to a third-party scanner to decide whether it's safe.</p><div class="d">Local-only by default: signature scanning, rule matching and local detonation. An external sandbox needs per-file confirmation.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span><span class="nm">Hunt chat and files</span></div><p class="tx">One bad file or message becomes a sweep across every library and conversation.</p></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><span class="nm">Licensing solved</span></div><p class="tx">Microsoft dropped the Teams export metering in August 2025. No special arrangement needed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band ln sect" id="hands">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">Hands-on</span>
+      <h2>Automatic containment is the baseline, not the product</h2>
+      <p class="sub">What matters on a bad afternoon is what <em>you</em> can do without waiting for a rule to agree, and how fast one click can undo it.</p>
+    </div>
+    <div class="tiles" style="margin-top:clamp(24px,3.2vw,34px)">
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span><span class="nm">Search every mailbox</span></div><p class="tx">By sender, subject, phrase, link or attachment. Watch hits arrive, stop early.</p></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><span class="nm">Look before you touch</span></div><p class="tx">Open any result safely, or take it away as a file. Nothing goes because a tool decided.</p></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="nm">Remove it everywhere</span></div><p class="tx">Bulk delete from every mailbox. Soft while unsure, purge when certain.</p></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="nm">Put it back</span></div><p class="tx">Restore from quarantine, deleted items, or recoverable items most tools ignore.</p></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">Work three quarantines</span></div><p class="tx">Release, delete, and answer whoever has been chasing you about it.</p></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg></span><span class="nm">Open the link yourself</span></div><p class="tx">Throwaway browser in a container. Can't copy anything back out. Self-destructs.</p></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><span class="nm">A report button in Outlook</span></div><p class="tx">Staff report a suspicious message from the toolbar in one click. Real threats land in your queue; a training simulation is scored and the person told straight away.</p><div class="d">Outlook web add-in over an outbound-only connection; the add-in sends an identifier, never the message. Reported mail runs the full pipeline exactly like anything else.</div></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></span><span class="nm">Bring a sample in</span></div><p class="tx">Import a saved message from another company. Same analysis as everything else.</p></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="nm">Gated and recorded</span></div><p class="tx">Searching and purging are different permissions. Every action is attributed.</p></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="nm">One click to respond</span></div><p class="tx">Eight containment actions sit as buttons beside the finding that justifies them. No scripting, no portal hunting.</p><div class="d">Remove a forwarding rule or hidden inbox rule, revoke an OAuth app, sign out every session, force a password change, drop a delegate, switch off an auto-reply, disable the account. Hybrid-aware.</div></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><span class="nm">It comes to you</span></div><p class="tx">Push alerts to the browser the moment something lands, so nobody has to sit watching a console.</p><div class="d">Server-initiated push, keyed to your installation and generated on first run. Fires on new release requests, replayed tokens, sign-in policy drift and fresh account findings.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="band sect" id="creds">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">Credentials</span>
+      <h2>The password is the <span class="grad">actual target</span></h2>
+      <p class="sub">Phishing is only the delivery. What the attacker is shopping for is a credential that still works. A great many of them leaked somewhere else, years ago, and were never changed.</p>
+    </div>
+    <div class="tiles" style="margin-top:clamp(24px,3.2vw,34px)">
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="nm">Find the passwords already in a breach dump</span></div><p class="tx">See which of your staff are signing in today with a password that is already published, before somebody else gets round to trying it.</p><div class="d">Each account's stored hash is compared against corpora of known-compromised hashes. Applies to organisations running on-premises Active Directory, and runs read-only.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="nm">Nothing leaves to check it</span></div><p class="tx">The breach lists come to you. Your directory never goes out to somebody else's checking service, and no password is ever read, sent or stored.</p><div class="d">Public lists arrive pre-hashed, or as wordlists hashed locally on your own box; add your own lists too. Everything merges into one offline set, and every ingested file is handled as untrusted data, never executed.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg></span><span class="nm">The weaknesses underneath</span></div><p class="tx">A read-only sweep of the directory for the openings an attacker uses once they are already inside and looking for a way up.</p><div class="d">Kerberoastable accounts, AS-REP roasting, unconstrained delegation, privileged group drift, krbtgt age and stale accounts left enabled.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">A reset does not end the session</span></div><p class="tx">Change the password and the attacker may still be holding a live token that works. Spot the stolen session being replayed, and cut it.</p><div class="d">Correlates each account's interactive sign-ins against its non-interactive token redemptions; confidence-scored, with optional automatic revocation.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">The sign-in that cannot be phished</span></div><p class="tx">A password can be typed into a convincing fake. A key sealed into the machine itself cannot be copied out, forwarded, or handed over by a helpful employee. That is what makes certificate sign-in the end of the problem rather than another control.</p><div class="d">Shows which certificates are hardware-attested and escrowed, which people and devices are actually covered, and which templates are still handing out exportable software keys that defeat the point.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="nm">One template can mint anybody</span></div><p class="tx">A single misconfigured certificate template lets anyone allowed to enrol request a certificate in somebody else's name, an administrator's included. It is quiet, it is permanent, and almost nobody checks for it.</p><div class="d">Finds enrollee-supplied-subject templates carrying an authentication purpose with no approval step, and ranks each one by whether the path is genuinely reachable rather than flagging every template alike.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-cert"/></svg></span><span class="nm">Nor does it end a certificate</span></div><p class="tx">A certificate issued to a person keeps working long after their password changes. Most teams have never once looked at the list.</p><div class="d">Per-user issued-certificate inventory, approval-gated revocation and forced publication of the revocation list.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-radar"/></svg></span><span class="nm">And the rules that let them in</span></div><p class="tx">Your sign-in policies, scored against a zero-trust baseline, with every change attributed to whoever made it.</p><div class="d">Full policy inventory, drift with who and when, coverage gaps, and report-only testing before anything is enforced.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="band soft sect" id="ai">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">The engine</span>
+      <h2>An <span class="grad">AI engine</span> we built, trained and run on your own hardware</h2>
+      <p class="sub">Not a model on its own. A <b>cascade</b> of purpose-trained models wired into custom inference loops, with detonation, optical reading and sender-authentication signals fused into a single verdict. Engineered to run on an ordinary server CPU: no GPU, no accelerator, no cloud, no API key.</p>
+    </div>
+
+    <div class="flow">
+      <div class="fs"><div class="hh"><i>1</i><h4>The quick read</h4></div><div class="sz">Every message · milliseconds · CPU</div><p class="tx">A small, fast transformer trained purely on phishing language sees everything first. Most mail is settled here and nobody is interrupted.</p><div class="d">Quantised to integer weights and compiled for CPU inference, so a verdict costs milliseconds on an ordinary core. Confidence thresholds are tunable at runtime without redeploying.</div></div>
+      <div class="fs"><div class="hh"><i>2</i><h4>The careful read</h4></div><div class="sz">Anything uncertain · still CPU</div><p class="tx">Uncertainty escalates itself to a far larger model before anyone is told they have been attacked. The cascade decides when that is worth the compute.</p><div class="d">The escalation loop is ours: a margin test on the first stage routes only genuinely ambiguous mail onward, which is what keeps a large model affordable without an accelerator. Pinned to a fixed revision, so the engine cannot change underneath you.</div></div>
+      <div class="fs op"><div class="hh"><i>3</i><h4>Specialists</h4></div><div class="sz">Optional · off by default</div><p class="tx">A text message and a long email do not read alike. Add a trained specialist per shape and let the ensemble weigh them.</p><div class="d">Additional classifier heads routed by message shape, their opinions blended into the ensemble at a weight you set, with the fusion logic and every stage score exposed rather than hidden.</div></div>
+    </div>
+
+    <div class="rule" style="border-color:color-mix(in srgb,var(--mint) 45%,var(--line))">
+      <span class="vb" style="background:var(--m-dim);color:var(--mint)">No GPU</span>
+      <p class="tx">Security AI usually means renting somebody else's accelerators and posting your mail to them. <b>This cascade was engineered to fit a plain virtual machine.</b> Quantised weights, batched CPU inference and a routing loop that spends the big model only where it changes the answer.<span class="d">The appliance runs on ordinary vCPU and RAM, with no CUDA, no accelerator passthrough and no per-token bill. Adding a specialist model is a download, not a hardware project.</span></p>
+    </div>
+
+    <div class="rule" style="border-color:color-mix(in srgb,var(--cyan) 45%,var(--line))">
+      <span class="vb" style="background:var(--c-dim);color:var(--cyan)">Zero day</span>
+      <p class="tx">A lure first sent this morning matches no blocklist and no signature, so most filters wave it through. <b>Nothing here depends on having seen the attack before.</b> The pipeline reasons about the message itself: how the language is built, whether the sender really holds the domain, where the link lands once followed, what the attachment does when opened, and what the picture says.<span class="d">Signature and reputation checks are contributors to a score, never the deciding vote. A verdict can be reached with every reputation source switched off.</span></p>
+    </div>
+
+    <div class="tiles" style="margin-top:13px">
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span><span class="nm">Links are followed, not looked up</span></div><p class="tx">A brand new address has no reputation to check, so the page is fetched and detonated to see what it actually asks for.</p></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg></span><span class="nm">Measured against you</span></div><p class="tx">Impersonation is judged against your real domains, your branding and your sending sources, not a global list of known-bad names.</p></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="nm">Caught after the click too</span></div><p class="tx">If a flawless message does get through, the relayed sign-in page and the odd token redemption still give the attack away.</p></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="nm">Fails closed</span></div><p class="tx">If any stage cannot reach a confident answer, the message is held rather than delivered. Uncertainty is not treated as safety.</p></div>
+    </div>
+
+    <div class="rule">
+      <span class="vb">The rule</span>
+      <p class="tx">It may shortcut a verdict of <b>"safe"</b>. It may never shortcut <b>"phishing"</b>. A false accusation costs an analyst's afternoon and teaches your staff to ignore the tool.<span class="d">The shortcut and escalation confidence levels are both settings, and the never-shortcut-an-accusation rule is auditable.</span></p>
+    </div>
+
+    <div class="tiles" style="margin-top:13px">
+      <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><span class="nm">Digital eye</span></div><p class="tx">An email is not just text and links. It reads the screenshots, the logos, the attachments and the QR codes too, so nothing hides in a picture.</p><div class="d">Text is lifted out of inline images and attachments, and QR codes decoded, before any link or reputation check runs.</div></div>
+      <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg></span><span class="nm">Shows its working</span></div><p class="tx">Which words drove the verdict. "The model said so" isn't defensible to a manager.</p><div class="d">Per-message word-level attribution plus a second, independent local explanation pass.</div></div>
+      <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="nm">Trained on your mail</span></div><p class="tx">Every verdict your analysts correct becomes training data. It gets better at your company, not at a benchmark.</p></div>
+      <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">Fully offline</span></div><p class="tx">The engine works with the network unplugged. No AI provider, no subscription, no telemetry. The trained model is yours.</p></div>
+    </div>
+
+    <div class="gh"><h3>Sandboxes you run</h3><span class="bd2 bd-i">Nothing leaves</span></div>
+    <div class="sbx">
+      <div class="sb"><div class="nm">Kernel-level detonation</div><p class="tx">Watched from beneath the operating system, where evasion gives up.</p></div>
+      <div class="sb"><div class="nm">Full behavioural report</div><p class="tx">Everything a file touches, on your hardware.</p></div>
+      <div class="sb"><div class="nm">Signature and rule scanning</div><p class="tx">Always on, the default for every attachment.</p></div>
+      <div class="sb"><div class="nm">Your own appliance</div><p class="tx">Already run an on-prem detonation box? It plugs in.</p></div>
+      <div class="sb"><div class="nm">Throwaway browser</div><p class="tx">Open a hostile link by hand, safely.</p></div>
+      <div class="sb"><div class="nm">Per-email container</div><p class="tx">Built for one message, destroyed after.</p></div>
+    </div>
+
+    <div class="gh"><h3>Third-party, if you ask</h3><span class="bd2 bd-o">Opt-in · told first</span></div>
+    <div class="sbx">
+      <div class="sb"><div class="nm">URLScan.io</div><p class="sh">Shares: the address and your IP.</p></div>
+      <div class="sb"><div class="nm">FileScan.io</div><p class="sh">Shares: the file itself. The most invasive.</p></div>
+      <div class="sb"><div class="nm">Safe Browsing</div><p class="sh">Shares: a hash fragment, not the address.</p></div>
+      <div class="sb"><div class="nm">AbuseIPDB</div><p class="sh">Shares: the IP only.</p></div>
+      <div class="sb"><div class="nm">AlienVault OTX</div><p class="sh">Shares: the indicator looked up.</p></div>
+      <div class="sb"><div class="nm">The rule</div><p class="tx">You see the service, the data and the retention before anything is sent.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band ln sect" id="train">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">Training</span>
+      <h2>No 45-minute video. The lesson lands the second they slip.</h2>
+      <p class="sub">154 exercises across email, text, phone, QR and fake meetings. Teach in the one moment anyone is paying attention.</p>
+    </div>
+
+    <div class="tiles" style="margin-top:clamp(24px,3.2vw,32px)">
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="nm">Matched to the trick</span></div><p class="tx">Caught by a QR code? You get the QR lesson. One page, one minute, not a module.</p><div class="d">26 landing and awareness pages, 13 of them lessons, auto-matched to the template that caught them.</div></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="nm">Scores reporting</span></div><p class="tx">Clicking is noise. Speaking up is the behaviour you want, so that's what's ranked.</p><div class="d">Report rate Bayesian-shrunk toward the org average (M=5); raw percentages still shown.</div></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-target"/></svg></span><span class="nm">Builds itself</span></div><p class="tx">One campaign per department, with pretexts and senders that fit. Spread over hours.</p><div class="d">Department profiles map to template categories; executives get named-person BEC identities.</div></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><span class="nm">New starters handled</span></div><p class="tx">A short sequence when they appear in the directory, with a follow-up later.</p></div>
+    </div>
+
+    <div class="head" style="margin-top:clamp(38px,5vw,58px)">
+      <span class="k">Technique library</span>
+      <h2>Eight ways in</h2>
+      <p class="sub">Select any technique for what it rehearses and how it is delivered.</p>
+    </div>
+
+    <div class="acc" id="acc">
+      <div class="at"><button type="button" aria-expanded="false" aria-controls="a1"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><span class="nw"><span class="nm">Email</span><span class="sbt">93 lures, written and styled</span></span><svg class="ic cv" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        <div class="bdw"><div class="bd" id="a1">The pretexts people actually receive, already written and styled.
+          <ul><li>Microsoft 365 alerts, shared files, DocuSign, Teams and Zoom notices</li><li>Invoices, supplier bank changes, payroll edits, payslips</li><li>Legal holds, court filings, compliance notices</li><li>MFA enrolment, push approvals, helpdesk identity checks</li><li>Plain text with no branding: the CEO's "are you at your desk"</li></ul>
+          <div class="d">Direct Graph injection with simulation headers, so your own filtering doesn't eat the test. CSS inlined at send time.</div>
+        </div></div>
+      </div>
+      <div class="at"><button type="button" aria-expanded="false" aria-controls="a2"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg></span><span class="nw"><span class="nm">Text message</span><span class="sbt">Smishing · 21 scripts</span></span><svg class="ic cv" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        <div class="bdw"><div class="bd" id="a2">A text skips every control you own. No filter, no scanner, no banner.
+          <ul><li>Sent from your own number, so replies behave normally</li><li>Alarming and friendly variants</li><li>Teaching page built for a phone screen</li></ul>
+          <div class="d">Your choice of commercial SMS and voice carrier, selected once for the whole system. Per-org main line. Sends spread over hours.</div>
+        </div></div>
+      </div>
+      <div class="at"><button type="button" aria-expanded="false" aria-controls="a3"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-qr"/></svg></span><span class="nw"><span class="nm">QR code</span><span class="sbt">Quishing · 10 lures</span></span><svg class="ic cv" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        <div class="bdw"><div class="bd" id="a3">Moves the attack onto a phone you don't manage. No link to hover over.
+          <ul><li>MFA re-enrolment, payroll deposit, benefits, VPN setup</li><li>Car park, guest Wi-Fi, badge access</li><li>DocuSign envelopes and security alerts</li></ul>
+          <div class="d">Rendered as an HTML table, not an image, so it shows without "display blocked content" killing the test.</div>
+        </div></div>
+      </div>
+      <div class="at"><button type="button" aria-expanded="false" aria-controls="a4"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg></span><span class="nw"><span class="nm">Phone call</span><span class="sbt">Vishing · 14 scripts</span></span><svg class="ic cv" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        <div class="bdw"><div class="bd" id="a4">An automated call that behaves like a company phone system.
+          <ul><li>Build the menu visually: "press 1 for IT", several levels deep</li><li>Places from your main line, dials through to extensions</li><li>Pairs with email: the message says expect a call, and it comes</li></ul>
+          <div class="d">Drag-and-drop multi-level IVR builder, extension SendDigits, numbers normalised before dispatch.</div>
+        </div></div>
+      </div>
+      <div class="at"><button type="button" aria-expanded="false" aria-controls="a5"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg></span><span class="nw"><span class="nm">"Verify you are human"</span><span class="sbt">ClickFix · paste-jacking</span></span><svg class="ic cv" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        <div class="bdw"><div class="bd" id="a5">The technique that overtook attachments. A bot check tells the user to paste a command into the Run box, and they do.
+          <ul><li>Cloudflare, reCAPTCHA, hCaptcha and plain corporate skins</li><li>Auto-copy and make-them-do-it variants, as real campaigns use</li><li>The command only calls the tracking address. Nothing runs.</li></ul>
+        </div></div>
+      </div>
+      <div class="at"><button type="button" aria-expanded="false" aria-controls="a6"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></span><span class="nw"><span class="nm">Documents</span><span class="sbt">Word · PDF · PowerPoint · 5 lures</span></span><svg class="ic cv" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        <div class="bdw"><div class="bd" id="a6">A well-made attachment that reports when it's opened and acted on.
+          <ul><li>Invoices, HR notices, policy updates, training assignments</li><li>A tracking link and nothing else: no macros, no code</li></ul>
+          <div class="d">DOCX, PDF and PPTX generated at campaign time with per-target substitutions.</div>
+        </div></div>
+      </div>
+      <div class="at"><button type="button" aria-expanded="false" aria-controls="a7"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-usb"/></svg></span><span class="nw"><span class="nm">USB drop</span><span class="sbt">Physical</span></span><svg class="ic cv" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        <div class="bdw"><div class="bd" id="a7">The oldest trick that still works. Leave drives in the car park and find out who plugs one in.
+          <ul><li>Register the drives you placed and where</li><li>The file reports back when opened</li><li>Whoever found it gets the lesson, not a telling-off</li></ul>
+        </div></div>
+      </div>
+      <div class="at"><button type="button" aria-expanded="false" aria-controls="a8"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-video"/></svg></span><span class="nw"><span class="nm">Fake Teams &amp; Zoom</span><span class="sbt">The one nobody has rehearsed</span></span><svg class="ic cv" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        <div class="bdw"><div class="bd" id="a8">Your staff were taught to distrust email. Nobody taught them to distrust a meeting invite from their own finance director.
+          <ul><li><b>The join screen.</b> Sign-in, device check, "waiting to be admitted", then chat. The waiting room is what sells it.</li><li><b>Or somebody on the call.</b> A cloned voice and a face on camera, listening and replying in real time.</li><li>It stops the instant they comply. What was revealed is never collected or stored.</li><li>Imitating a real colleague is blocked without their recorded consent.</li></ul>
+          <div class="d">Scripted page served by trainer-proxy; funnel maps join = clicked, chat link = interacted, completion = submitted. Live path: speech to text, to the conversation engine, to synthesised voice, to a synthesised face. The media bridge into a live Teams call is infrastructure you provision.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band soft sect" id="odd">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">Fair question</span>
+      <h2>Three of these look like another product</h2>
+      <p class="sub">A DMARC reader, a leak-site monitor and an account scanner. Here's the honest case.</p>
+    </div>
+    <div class="segs" role="tablist" aria-label="Modules that need explaining">
+      <button class="sg" role="tab" id="w1" aria-controls="q1" aria-selected="true">DMARCinspector</button>
+      <button class="sg" role="tab" id="w2" aria-controls="q2" aria-selected="false">DarkScout</button>
+      <button class="sg" role="tab" id="w3" aria-controls="q3" aria-selected="false">Watcher</button>
+    </div>
+
+    <div class="wp" role="tabpanel" id="q1" aria-labelledby="w1" tabindex="0">
+      <div>
+        <div class="q"><span class="m">?</span><span>"Isn't that a job for whoever runs our mail?"</span></div>
+        <p class="ans">Look at what the reports contain: <b>every service on earth that sent mail claiming to be you, and whether it was believed.</b> That's a list of who impersonates you.</p>
+        <p class="ans">It also catches what you'd never otherwise hear about. Phishing aimed at <b>your customers</b> using your name never touches your mailboxes, so no filter will ever show it to you.</p>
+      </div>
+      <div>
+        <span class="lbl">On screen</span>
+        <ul class="pts">
+          <li><span class="dt"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#i-grid"/></svg></span><span><b>Who sends as you</b>, with your note on whether it's meant to.</span></li>
+          <li><span class="dt"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#i-bolt"/></svg></span><span><b>An alert when that list grows.</b> A forgotten supplier, or an attacker.</span></li>
+          <li><span class="dt"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#i-shield"/></svg></span><span><b>A safe next step</b> toward blocking impersonation outright.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="wp" role="tabpanel" id="q2" aria-labelledby="w2" tabindex="0" hidden>
+      <div>
+        <div class="q"><span class="m">?</span><span>"Dark web monitoring sounds like a vendor upsell."</span></div>
+        <p class="ans">Two things, and deliberately nothing more. <b>Convincing scams are built from leaked data.</b> The invoice quoting your real purchase order came from somewhere.</p>
+        <p class="ans">And <b>most of those break-ins started with phishing.</b> Appearing on a leak site is your own anti-phishing work being marked from outside.</p>
+      </div>
+      <div>
+        <span class="lbl">On screen</span>
+        <ul class="pts">
+          <li><span class="dt"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#i-grid"/></svg></span><span><b>A watchlist you control</b>, including suppliers that matter.</span></li>
+          <li><span class="dt"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#i-bolt"/></svg></span><span><b>A notice within hours</b>, with the posting it came from.</span></li>
+          <li><span class="dt"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#i-lock"/></svg></span><span><b>Nothing sent anywhere.</b> Matching happens on your server.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="wp" role="tabpanel" id="q3" aria-labelledby="w3" tabindex="0" hidden>
+      <div>
+        <div class="q"><span class="m">?</span><span>"That's account security. Shouldn't the M365 admins own it?"</span></div>
+        <p class="ans">Watcher answers the question every phishing incident ends on: <b>the password went somewhere, so what did they do with it?</b></p>
+        <p class="ans">Deleting the email isn't the fix. The fix is the forwarding rule, the rule hiding the bank's replies, the app still reading mail after the reset. That list <em>is</em> invoice fraud, and a tool that only reads email cannot see it.</p>
+      </div>
+      <div>
+        <span class="lbl">On screen</span>
+        <ul class="pts">
+          <li><span class="dt"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#i-grid"/></svg></span><span><b>A per-person checklist</b>, including what the account has been sending.</span></li>
+          <li><span class="dt"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#i-bolt"/></svg></span><span><b>A fix button on each finding.</b> Cut the app, sign out every device, lock it.</span></li>
+          <li><span class="dt"><svg class="ic" style="width:13px;height:13px" aria-hidden="true"><use href="#i-key"/></svg></span><span><b>A record of every action</b>, so the clean-up is defensible later.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band sect" id="fits">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">Fits what you already own</span>
+      <h2>Keep your email security. We <span class="grad">plug into it</span>, or stand behind it.</h2>
+      <p class="sub">Nothing here asks you to tear out what you have already bought. PHISHZ reads its verdict, works its quarantine over the API, and takes on the stages no mail filter was ever built for, whether yours is a gateway in front of Microsoft 365, an API product sitting beside it, or Microsoft's own.</p>
+    </div>
+    <div class="tiles" style="margin-top:clamp(24px,3.2vw,34px)">
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="nm">It knows who filtered it</span></div><p class="tx">Every message records which product handled it on the way in and what that product decided, so you can see exactly where something got through.</p><div class="d">Identifies Microsoft, Proofpoint, Mimecast, Barracuda, Check Point, Cisco IronPort, Forcepoint and Trend Micro from routing and vendor headers, whether they sit in front of the tenancy or alongside it.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">Three quarantines, one queue</span></div><p class="tx">Work Microsoft, Check Point and Kaspersky quarantine from the same screen. Release, delete and answer whoever is chasing you, without three portals and three logins.</p><div class="d">Direct API integration with Microsoft Defender quarantine, Check Point Harmony Email and Kaspersky Security for Microsoft 365, including release-request queues reconciled against what the vendor still actually holds.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><span class="nm">A second opinion that disagrees</span></div><p class="tx">Your email security and our pipeline look for different things. When the verdicts differ you see both, side by side, and you decide, rather than finding out from the person who got phished.</p></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-radar"/></svg></span><span class="nm">Your intelligence, your keys</span></div><p class="tx">Bring the threat-intelligence sources you already trust. They stay switched off until you ask for them, and the engine never needs them to reach a verdict.</p><div class="d">Optional, consent-gated lookups against AlienVault OTX, Google Safe Browsing, AbuseIPDB and URLScan. Only indicators are ever sent: a URL, a domain, an address, a hash. The message itself never leaves.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg></span><span class="nm">It feeds the rest of your kit</span></div><p class="tx">What the platform learns does not stop at the console. Hand it to the firewall and the endpoints you already manage.</p><div class="d">Simulation domains and URLs publish as Palo Alto external dynamic lists so training traffic is not sinkholed. Endpoint delivery through Microsoft Intune or PDQ Connect.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg></span><span class="nm">Or run it on its own</span></div><p class="tx">Nothing in front of Microsoft 365? Microsoft 365 and PHISHZ is a complete posture by itself, and it is what a lot of small teams actually run.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band ln sect" id="mods">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">What's included</span>
+      <h2>Sixteen modules, one login, one audit trail</h2>
+      <p class="sub">Sixteen on this page, and more inside them: Watcher alone holds Password Guard, CA Guard, TokenGuard and app permissions. Filter by the problem you are solving.</p>
+    </div>
+    <div class="fl" id="fl">
+      <button class="fc" type="button" aria-pressed="true" data-f="all">Everything</button>
+      <button class="fc" type="button" aria-pressed="false" data-f="mail">Email</button>
+      <button class="fc" type="button" aria-pressed="false" data-f="id">Accounts</button>
+      <button class="fc" type="button" aria-pressed="false" data-f="brand">Brand</button>
+      <button class="fc" type="button" aria-pressed="false" data-f="ppl">People</button>
+      <button class="fc" type="button" aria-pressed="false" data-f="ops">Running it</button>
+      <span class="cnt" id="cnt">Showing all 16</span>
+    </div>
+    <div class="grid" id="gr">
+      <div class="mc" data-c="ops"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg></span><span class="nm">Dashboard</span></div><p class="tx">One list of what needs you today, from every module. No checking five screens.</p></div>
+      <div class="mc" data-c="mail"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><span class="nm">Analyst</span></div><p class="tx">Review and detonate a reported email safely. Real sender, real link destinations, a safe picture of the page.</p></div>
+      <div class="mc" data-c="mail"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span><span class="nm">Hunter</span></div><p class="tx">Search every mailbox at once, remove what you find, restore if you overreached.</p><p class="subs">Search · Preview · Bulk delete · Restore · Notify</p></div>
+      <div class="mc" data-c="mail"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="nm">Guardian</span></div><p class="tx">Checks mail within seconds of arrival. Also Teams chats and shared files.</p><p class="subs">Flagged mail · Teams · Files · Mailboxes · Action history</p></div>
+      <div class="mc" data-c="id"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><span class="nm">Watcher</span></div><p class="tx">The clean-up list after a compromise, with a fix button on every item.</p><p class="subs">Monitored accounts · OAuth apps · Password Guard · CA Guard · TokenGuard · App permissions</p></div>
+      <div class="mc" data-c="ppl"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-target"/></svg></span><span class="nm">Trainer</span></div><p class="tx">Eight techniques, 154 exercises, taught at the moment of the mistake.</p><p class="subs">Campaigns · Email templates · SMS · Voice &amp; IVR · Landing pages · Organisations · Leaderboard</p></div>
+      <div class="mc" data-c="ppl"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="nm">Signatory</span></div><p class="tx">Email signatures, standardised across every mailbox, with an alert when someone edits theirs.</p><p class="subs">Users · Classic devices · Monitoring · Group assignments · Templates · Photos · Add-in</p></div>
+      <div class="mc" data-c="brand"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><span class="nm">DMARC<i>i</i>nspector</span></div><p class="tx">A readable list of everyone sending email as your company.</p></div>
+      <div class="mc" data-c="brand"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg></span><span class="nm">DNS<i>i</i>mposter</span></div><p class="tx">Copycat domains, and which are set up to receive mail rather than just host a page.</p></div>
+      <div class="mc" data-c="id"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="nm">AiTM<i>t</i>rap</span></div><p class="tx">Catches the attack that defeats approval prompts: your login page, relayed.</p></div>
+      <div class="mc" data-c="brand"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-radar"/></svg></span><span class="nm">Dark<i>S</i>cout</span></div><p class="tx">Leak sites watched for your name and your suppliers'.</p><p class="subs">Leak sites · Onion index · Breach feeds · Watchlist</p></div>
+      <div class="mc" data-c="id"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-cert"/></svg></span><span class="nm">Cert<i>A</i>dmin</span></div><p class="tx">Runs certificate sign-in as a phishing-proof replacement for passwords: who holds one, whose key is hardware-bound, and which templates are unsafe.</p><p class="subs">Certificates · TPM attestation · Template abuse (ESC1) · Autoenrolment · Cleanup · Revocations · CRL</p></div>
+      <div class="mc" data-c="mail"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">Quarantine</span></div><p class="tx">Microsoft, Check Point and Kaspersky held mail, reviewed in one place.</p><p class="subs">Microsoft · Check Point · Kaspersky · Release requests</p></div>
+      <div class="mc" data-c="mail"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg></span><span class="nm">Sandbox</span></div><p class="tx">A throwaway browser plus the file and link checks the whole platform uses.</p><p class="subs">Browser sandbox · URL scan · File analysis</p></div>
+      <div class="mc" data-c="ops"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></span><span class="nm">Mail setup checks</span></div><p class="tx">How retention, journaling and activity logging are really configured.</p></div>
+      <div class="mc" data-c="ops"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="nm">Status &amp; history</span></div><p class="tx">Every action attributed, roles that limit who can delete, honest health checks.</p><p class="subs">Services · Host OS · Audit log · Backups</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band sect" id="sister">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">Sister product</span>
+      <h2>PHISHZ stops it arriving. <span class="grad">ENFORZ stops it running.</span></h2>
+      <p class="sub">Same team, same principles, same appliance model. The names are not subtle: PHISHZ is phish zenith, ENFORZ is enforce. Each is free, each runs on your own hardware, and neither needs the other.</p>
+    </div>
+    <div class="tiles" style="margin-top:clamp(24px,3.2vw,34px)">
+      <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></span><span class="nm">This half: the way in</span></div><p class="tx">Mail, Teams, shared files and the channels no filter reaches. Caught before delivery where it can be, remediated after the click where it cannot, and your people rehearsed against the rest.</p></div>
+      <div class="ti"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">The other half: the thing that runs</span></div><p class="tx">Eventually somebody clicks anyway. ENFORZ is Windows application control made survivable: whatever was downloaded does not execute, because it was never approved, and nothing had to recognise it first.</p><div class="d">Telemetry from your own fleet collapsed into decisions a person can make, simulated against what already happened, and enforced one ring at a time with a way back. Fourteen checks fail closed before anything enforces.</div></div>
+      <div class="ti cy"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="nm">Together</span></div><p class="tx">The lure is caught before it lands, the people are trained for the ones that get through, and the payload cannot start even if everything else fails. Two appliances, both yours, nothing shared with us.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band soft sect" id="trust">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">Trust</span>
+      <h2>It holds the keys to your email</h2>
+      <p class="sub">That makes it a target, and it's built on that assumption.</p>
+    </div>
+    <div class="tiles" style="margin-top:clamp(24px,3.2vw,34px)">
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">No door inwards</span></div><p class="tx">Internet-facing parts live on separate machines. The appliance only ever calls out.</p><div class="d">Edge nodes are never called inbound. The appliance dials out over a mutually authenticated tunnel and polls for work.</div></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="nm">Secrets in a vault</span></div><p class="tx">Every credential, token and certificate lives in a sealed HashiCorp Vault. Never in a config file, never in an environment variable, never on disk in the clear.</p><div class="d">The vault re-seals itself on every reboot and a person has to unlock it, so a stolen disk image or a cold backup gives up nothing. Services hold no long-lived secrets of their own; they draw what they need at runtime and nothing else.</div></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg></span><span class="nm">Hardened from the kernel up</span></div><p class="tx">A locked-down Linux base where every service runs without privileges, is walled off from the others, and cannot gain new rights once it is running.</p><div class="d">Containers run rootless with capabilities dropped, privilege escalation blocked, read-only filesystems wherever the service allows it, and a mandatory access-control profile per service. Fifteen services across three network segments, one of which has no route to the internet at all.</div></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><span class="nm">Everything attributable</span></div><p class="tx">Roles gate who can delete or release. Every action is recorded against a name.</p></div>
+    </div>
+
+    <div class="hon">
+      <h3>It arrives as an appliance</h3>
+      <p class="sub" style="margin-top:10px">The whole platform ships as one virtual machine for Hyper-V or VMware. The operating system underneath is hardened and patched as part of the release, so there is no Linux build for anyone on your side to get right, and no stack of dependencies to assemble.</p>
+      <ul class="hl" style="margin-top:18px">
+        <li><span class="nn">1</span><span><b>Import the image.</b> One file into Hyper-V or VMware. It boots configured, with every service already in place.</span></li>
+        <li><span class="nn">2</span><span><b>Give it an address and unlock the vault.</b> Secrets are sealed until a person opens them, including after every reboot.</span></li>
+        <li><span class="nn">3</span><span><b>Connect Microsoft 365.</b> Work through the setup screens, grant the permissions, and it starts watching.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="band soft sect" id="about">
+  <div class="wrap">
+    <div class="head">
+      <span class="k">Who builds it</span>
+      <h2>Built by a non-profit, <span class="grad">for</span> non-profits</h2>
+      <p class="sub">The organisations with the least to spend on security are targeted with the same lures as everyone else. PHISHZ exists to close that gap. It is free, the source is open, and there is no commercial edition holding the useful parts back.</p>
+    </div>
+
+    <div class="why">
+      <p>It is free because we believe in a more secure future, and you cannot build one by selling it only to the organisations that can afford it.</p>
+      <p>An organisation without a security budget is not a smaller target. It is an easier one, and attackers have worked that out. So there is no paid tier waiting for you later, no feature held back, and no point at which this starts costing money.</p>
+    </div>
+
+    <div class="tiles" style="margin-top:clamp(24px,3.2vw,34px)">
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="nm">100% yours</span></div><p class="tx">The installation is yours, the hardware is yours, and everything inside it is yours. Nothing is shared with us or transmitted to us: not a message, not a name, not a count of how often you use it.</p><div class="d">There is no licence check, no activation, no telemetry endpoint and no update channel reporting back. The platform has no reason to contact us and does not.</div></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="nm">Free to run</span></div><p class="tx">No licence, no subscription, no per-mailbox charge, and no edition where the useful parts cost extra. All sixteen modules are in the one release. Your cost is the server it runs on.</p></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></span><span class="nm">Open source, MIT</span></div><p class="tx">Every detection rule and every action is in code you can read, change and audit before you trust it.</p></div>
+      <div class="ti mn"><div class="h"><span class="bx"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="nm">Nothing to sell you</span></div><p class="tx">No telemetry, no usage reporting, no upsell path. Nobody profits from what your mail contains.</p></div>
+          </div>
+
+    <div class="hon" style="margin-top:clamp(20px,2.6vw,28px)">
+      <h3>Talk to the people who built it</h3>
+      <p class="sub" style="margin-top:10px">Ask who we are, how the organisation is funded, and why we give this away. We will tell you plainly. Just as happily: a walk through a deployment, the Microsoft 365 permissions it needs, or a straight answer on whether it suits your organisation at all. There is no sales process, because there is nothing to sell.</p>
+      <div class="cta" style="margin-top:20px">
+        <a class="b b1" href="#">Ask about the organisation <svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></a>
+        <a class="b b2" href="#">Read the source</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band ln">
+  <div class="wrap cl">
+    <span class="k">Phishz · Phish Zenith</span>
+    <h2>One vantage point over the <span class="grad">whole</span> attack</h2>
+    <p class="lede">Spot the groundwork, catch what lands in mail, Teams and files, remove every copy yourself, close what is left behind, and train the people it was aimed at. One platform doing the work of a stack, for the kind of team that does not have a stack, or a night shift.</p>
+  </div>
+</section>
+
+<footer class="band ftr">
+  <div class="wrap">
+    <div><img class="ftr-lg lg lg-d" src="brand/logo-on-dark.webp" alt="PHISHZ" width="487" height="130"><img class="ftr-lg lg lg-l" src="brand/logo-on-light.webp" alt="" aria-hidden="true" width="488" height="129">
+    <p class="nt"><b>PHISHZ</b>, short for Phish Zenith: the point directly above, from which the whole environment is in view. Detection, investigation, clean-up and awareness training for Microsoft 365, on one server you own, with a custom detection pipeline that never phones home. Free and open source under the MIT licence. Flip <b>Detail</b> at the top for the mechanics behind any claim.</p>
+    </div>
+    <p class="rt">the whole attack, from above</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  // Open at the top. Without this, a reload (or a republish of this page while
+  // someone is reading it) restores their old scroll position mid-document.
+  function top0(){
+    if(location.hash) return;
+    try{window.scrollTo({top:0,left:0,behavior:'instant'})}catch(e){window.scrollTo(0,0)}
+  }
+  try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(e){}
+  top0(); window.addEventListener('load',top0);
+
+  var tg=document.getElementById('tg'),K='phishz.detail';
+  function set(on){document.body.classList.toggle('on',on);tg.setAttribute('aria-pressed',on?'true':'false');try{localStorage.setItem(K,on?'1':'0')}catch(e){}}
+  var seen=false;
+  try{seen=localStorage.getItem(K)!==null; if(localStorage.getItem(K)==='1')set(true)}catch(e){}
+  if(!seen)tg.classList.add('hint');
+  tg.addEventListener('click',function(){tg.classList.remove('hint');set(tg.getAttribute('aria-pressed')!=='true')});
+
+  function tabs(sel){
+    var list=document.querySelector(sel); if(!list) return;
+    var t=Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
+    function pick(tab){t.forEach(function(x){var on=x===tab;x.setAttribute('aria-selected',on?'true':'false');
+      var p=document.getElementById(x.getAttribute('aria-controls')); if(p)p.hidden=!on;});}
+    t.forEach(function(tab,i){
+      tab.addEventListener('click',function(){pick(tab)});
+      tab.addEventListener('keydown',function(e){
+        var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0; if(!d)return; e.preventDefault();
+        var n=t[(i+d+t.length)%t.length]; pick(n); n.focus();});
+    });
+  }
+  tabs('.rail'); tabs('.segs');
+
+  var fl=document.getElementById('fl'),gr=document.getElementById('gr'),cnt=document.getElementById('cnt');
+  if(fl&&gr&&cnt){
+    var cards=Array.prototype.slice.call(gr.querySelectorAll('.mc'));
+    fl.addEventListener('click',function(e){
+      var b=e.target.closest('.fc'); if(!b)return;
+      var f=b.getAttribute('data-f');
+      Array.prototype.forEach.call(fl.querySelectorAll('.fc'),function(c){c.setAttribute('aria-pressed',c===b?'true':'false')});
+      var n=0; cards.forEach(function(c){var m=f==='all'||c.getAttribute('data-c')===f;c.hidden=!m;if(m)n++;});
+      cnt.textContent=f==='all'?('Showing all '+n):('Showing '+n+' of '+cards.length);
+    });
+  }
+
+  var acc=document.getElementById('acc');
+  if(acc){
+    acc.addEventListener('click',function(e){
+      var b=e.target.closest('button[aria-expanded]'); if(!b)return;
+      var was=b.getAttribute('aria-expanded')==='true';
+      Array.prototype.forEach.call(acc.querySelectorAll('button[aria-expanded]'),function(x){
+        x.setAttribute('aria-expanded','false'); x.parentElement.classList.remove('open');});
+      if(!was){b.setAttribute('aria-expanded','true'); b.parentElement.classList.add('open');}
+    });
+  }
+
+  var rows=Array.prototype.slice.call(document.querySelectorAll('.feed [data-f]'));
+  if(rows.length&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var i=0,timer=setInterval(step,1400),feed=document.querySelector('.feed');
+    var bdy=document.querySelector('.feed .bdy');
+    function step(){
+      rows.forEach(function(r,n){r.classList.toggle('live',n===i)});
+      var cur=rows[i];
+      if(bdy&&cur&&bdy.scrollHeight>bdy.clientHeight+4){
+        var top=0;
+        if(i>0){
+          var cr=cur.getBoundingClientRect(),br=bdy.getBoundingClientRect();
+          top=bdy.scrollTop+(cr.top-br.top)-(br.height-cr.height)/2;
+          top=Math.max(0,Math.min(top,bdy.scrollHeight-bdy.clientHeight));
+        }
+        try{bdy.scrollTo({top:top,behavior:'smooth'})}catch(e){bdy.scrollTop=top}
+      }
+      i=(i+1)%rows.length;
+    }
+    if(feed){feed.addEventListener('mouseenter',function(){clearInterval(timer)});
+      feed.addEventListener('mouseleave',function(){timer=setInterval(step,1400)});}
+  }
+
+  var mb=document.getElementById('mb'),nv=document.getElementById('nav');
+  if(mb&&nv){
+    var setMenu=function(open){
+      nv.classList.toggle('open',open);
+      mb.setAttribute('aria-expanded',open?'true':'false');
+    };
+    mb.addEventListener('click',function(){setMenu(mb.getAttribute('aria-expanded')!=='true')});
+    nv.addEventListener('click',function(e){if(e.target.closest('a'))setMenu(false)});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')setMenu(false)});
+    document.addEventListener('click',function(e){
+      if(!nv.contains(e.target)&&!mb.contains(e.target))setMenu(false)},true);
+    window.addEventListener('resize',function(){if(window.innerWidth>1010)setMenu(false)});
+  }
+
+  var links=Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  if('IntersectionObserver' in window){
+    var ob=new IntersectionObserver(function(es){es.forEach(function(e){
+      if(!e.isIntersecting)return; var k=secs.indexOf(e.target); if(k<0)return;
+      links.forEach(function(a,j){a.classList.toggle('on',k===j)});});},{rootMargin:'-45% 0px -50% 0px'});
+    secs.forEach(function(s){if(s)ob.observe(s)});
+  }
+})();
+</script>
